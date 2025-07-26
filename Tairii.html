@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para Tairii ❤️</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .phrase {
+      position: absolute;
+      color: white;
+      font-weight: bold;
+      animation: rise 2s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes rise {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-80px); }
+    }
+
+    #continueBtn {
+      position: absolute;
+      bottom: 50px;
+      padding: 12px 20px;
+      font-size: 18px;
+      background-color: #ff4d6d;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: none;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #letter {
+      display: none;
+      position: absolute;
+      top: 10%;
+      background-color: #fff;
+      color: black;
+      padding: 20px;
+      max-width: 400px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 18px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <button id="continueBtn">Continuar ❤️</button>
+  <div id="letter">
+    <h2>Para Tairii 💌</h2>
+    <p>Holaaa, Mi hermosaaa niñaaa, espero no te hallas awitado, xq no puedo estar presente para darte un ramitmo de flores, pero aqui estoy yo de otra forma, Nose si te lo dije, pero siempre me gustaron tus rulitos c:, No te rindaas, Mrda de que forma debo decirte, que Te amo, para que te des cuenta que te amo, Eres mi personita especial.
+post: Si Te quiero como un gusanito, una hoja, una flor, un gatito, ufff ya me vinieron cosas pervertidas te imagine, como una gatita, encima mio, aaa, mrdaa que RICAAA, SEXY Y HERMOSA ERES. Te amoooo ❤️</p>
+  </div>
+
+  <audio autoplay loop>
+    <source src="https://dl.sndup.net/5ky7/Vamonos%20a%20Marte%20-%20Kevin%20Kaarl.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const heartPoints = [];
+    const miniHearts = [];
+    const messages = [
+      "Te amo", "Te quiero", "Hermosa", "Bella", "Linda",
+      "Dulce", "Tiernaaa", "AAAh esoos Rulooos", "Mrdaaa Que Sexy eres", "Tengamos un hijo", "Bb sin bb tu me dices c:?"
+    ];
+
+    function heartFunction(t) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+      return { x, y };
+    }
+
+    for (let i = 0; i < Math.PI * 2; i += 0.05) {
+      const { x, y } = heartFunction(i);
+      heartPoints.push({
+        x: x * 20 + canvas.width / 2,
+        y: -y * 20 + canvas.height / 2,
+        alpha: 0
+      });
+    }
+
+    let currentIndex = 0;
+    function animateHeart() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      heartPoints.forEach((point, i) => {
+        if (i <= currentIndex) {
+          point.alpha = Math.min(point.alpha + 0.03, 1);
+        }
+        ctx.fillStyle = `rgba(255,0,100,${point.alpha})`;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      if (currentIndex < heartPoints.length - 1) {
+        currentIndex++;
+      } else {
+        document.getElementById("continueBtn").style.display = "block";
+      }
+
+      miniHearts.forEach(h => {
+        h.y -= h.speed;
+        h.alpha -= 0.01;
+        ctx.fillStyle = `rgba(255,100,150,${h.alpha})`;
+        ctx.beginPath();
+        ctx.arc(h.x, h.y, h.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      requestAnimationFrame(animateHeart);
+    }
+
+    setInterval(() => {
+      const h = {
+        x: Math.random() * canvas.width,
+        y: canvas.height,
+        size: 10 + Math.random() * 6,
+        speed: 1 + Math.random() * 1.5,
+        alpha: 1
+      };
+      miniHearts.push(h);
+    }, 500);
+
+    canvas.addEventListener("click", (e) => {
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+      const phrase = document.createElement("div");
+      phrase.className = "phrase";
+      phrase.style.left = e.clientX + "px";
+      phrase.style.top = e.clientY + "px";
+      phrase.innerText = msg;
+      document.body.appendChild(phrase);
+      setTimeout(() => phrase.remove(), 2000);
+    });
+
+    document.getElementById("continueBtn").addEventListener("click", () => {
+      document.getElementById("letter").style.display = "block";
+      document.getElementById("continueBtn").style.display = "none";
+    });
+
+    animateHeart();
+  </script>
+</body>
+</html>
